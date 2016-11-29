@@ -1,0 +1,14 @@
+{
+  "name": "gh-player",
+  "version": "1.0.0",
+  "description": "Plays sounds when labels are applied to GH issues",
+  "main": "main.js",
+  "author": "Walther Lalk",
+  "license": "MIT",
+  "dependencies": {
+    "config": "^1.24.0",
+    "githubhook": "^1.7.1",
+    "play-sound": "^1.1.1",
+    "slug": "^0.9.1"
+  }
+}
