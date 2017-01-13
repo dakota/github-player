@@ -3,6 +3,7 @@ var fs = require('fs');
 var player = require('play-sound')(opts = {});
 var slug = require('slug');
 var config = require('config');
+var Util = require('util');
 
 var github = githubhook(config.get('GitHub'));
 
@@ -17,6 +18,7 @@ function playRandomSound(sourceFile)
     var lines = data.split('\n');
     var soundFile = lines[Math.floor(Math.random()*lines.length)];
   
+    console.log(Util.format('Playing %s from the %s list', soundFile, sourceFile));
     player.play('sounds/' + soundFile);
   });
 }
