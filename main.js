@@ -9,14 +9,15 @@ var github = githubhook(config.get('GitHub'));
 
 function playRandomSound(sourceFile)
 {
-  var fileName = 'soundLists/' + sourceFile;
+  var fileName = 'soundLists/' + sourceFile.toLowerCase();
   if (!fs.existsSync(fileName)) {
+    console.log(Util.format('%s sound list does not exist', fileName));
     return;
   }
 
   fs.readFile(fileName, 'utf8', function (err,data) {
     var lines = data.split('\n');
-    var soundFile = lines[Math.floor(Math.random()*lines.length)];
+    var soundFile = lines[Math.floor(Math.random()*(lines.length - 1)];
   
     console.log(Util.format('Playing %s from the %s list', soundFile, sourceFile));
     player.play('sounds/' + soundFile);
