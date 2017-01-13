@@ -9,7 +9,7 @@ var github = githubhook(config.get('GitHub'));
 
 function playRandomSound(sourceFile)
 {
-  var fileName = 'soundLists/' + sourceFile
+  var fileName = 'soundLists/' + sourceFile;
   if (!fs.existsSync(fileName)) {
     return;
   }
@@ -40,7 +40,7 @@ github.on('issues', function (repo, ref, data) {
   }
 
   var label = data.label.name;
-  var fileName = slug(label);
+  var fileName = slug(label, {lower: true});
   playRandomSound('label/' + fileName);
 });
 
@@ -54,7 +54,7 @@ github.on('pull_request', function (repo, ref, data) {
   }
 
   var baseBranch = data.pull_request.base.ref;
-  var fileName = slug(baseBranch);
+  var fileName = slug(baseBranch, {lower: true});
 
   playRandomSound('merged/' + baseBranch);
 });
