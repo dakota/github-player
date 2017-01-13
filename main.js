@@ -51,7 +51,7 @@ github.on('pull_request', function (repo, ref, data) {
     return;
   }
 
-  var baseBranch = data.base.ref;
+  var baseBranch = data.pull_request.base.ref;
   var fileName = slug(baseBranch);
 
   playRandomSound('merged/' + baseBranch);
