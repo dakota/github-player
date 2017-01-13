@@ -17,7 +17,7 @@ function playRandomSound(sourceFile)
 
   fs.readFile(fileName, 'utf8', function (err,data) {
     var lines = data.split('\n');
-    var soundFile = lines[Math.floor(Math.random()*(lines.length - 1)];
+    var soundFile = lines[Math.floor(Math.random()*(lines.length - 1))];
   
     console.log(Util.format('Playing %s from the %s list', soundFile, sourceFile));
     player.play('sounds/' + soundFile);
