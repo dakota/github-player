@@ -9,6 +9,12 @@ var createHandler = require('github-webhook-handler')
 var ghHandler = createHandler({ path: config.get('ghPath'), secret: config.get('secret') });
 var bl = require('bl');
 var querystring = require('querystring');
+var accentMap =   {
+    british: "En-gb",
+    american: "En-us",
+    french: "Fr",
+    german: "De",
+  };
 
 function playRandomSound(sourceFile)
 {
@@ -46,6 +52,9 @@ var httpServer = http.createServer(function (req, res) {
 
   if (req.url.split('?').shift() === config.get('speakPath') && req.method === 'POST') {
     req.pipe(bl(function (err, data) {
+      var accent = 'En-gb';
+      var text = '';
+
       try {
         obj = querystring.parse(data.toString())
       } catch (e) {
@@ -56,11 +65,23 @@ var httpServer = http.createServer(function (req, res) {
         return hasError('Invalid token');
       }
 
+      text = obj.text;
+
+      var matched = text.match(/\[accent: (.*)\]/i);
+      if (matched) {
+        text = text.replace(/\[accent: (.*)\]/i, '');
+        if (accentMap[matched[1]]) {
+          accent = accentMap[matched[1].toLowerCase()];
+        } else {
+          return hasError('Invalid accent option')
+        }
+      }
+
       var request = {
         ie: 'UTF-8',
         client: 'tw-ob',
-        q: obj.text,
-        tl: 'En-gb'
+        q: text,
+        tl: accent
       };
       player.play('http://translate.google.com/translate_tts?' + querystring.stringify(request), {player: 'mplayer', mplayer: ['-af', 'volume=' + config.get('volume')]});
 
@@ -70,7 +91,7 @@ var httpServer = http.createServer(function (req, res) {
 
     return;
   }
-  
+
   ghHandler(req, res, function (err) {
     res.statusCode = 404
     res.end('no such location')
