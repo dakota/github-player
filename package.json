@@ -6,8 +6,9 @@
   "author": "Walther Lalk",
   "license": "MIT",
   "dependencies": {
+    "bl": "^1.2.0",
     "config": "^1.24.0",
-    "githubhook": "^1.7.1",
+    "github-webhook-handler": "^0.6.0",
     "play-sound": "^1.1.1",
     "slug": "^0.9.1"
   }

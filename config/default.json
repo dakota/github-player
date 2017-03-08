@@ -1,8 +1,9 @@
 {
-  "GitHub": {
-    "host": "0.0.0.0",
-    "port": 8082,
-    "path": "/",
-    "secret": "123456"
-  }
+  "host": "0.0.0.0",
+  "port": 8082,
+  "ghPath": "/webhook",
+  "speakPath": "/speak",
+  "secret": "123456",
+  "token": "123456",
+  "volume": 10
 }
