@@ -14,6 +14,9 @@ var accentMap =   {
     american: "En-us",
     french: "Fr",
     german: "De",
+    russian: 'Ru',
+    spanish: 'es',
+    italian: 'it'
   };
 
 function playRandomSound(sourceFile)
@@ -52,8 +55,37 @@ var httpServer = http.createServer(function (req, res) {
 
   if (req.url.split('?').shift() === config.get('speakPath') && req.method === 'POST') {
     req.pipe(bl(function (err, data) {
+      var volume = config.get('volume');
       var accent = 'En-gb';
       var text = '';
+
+      function command(command, value) {
+        command = command.toLowerCase();
+        value = value ? value.toLowerCase() : value;
+        switch (command) {
+          case 'help':
+          case 'h':
+            res.end('Options available are [accent|a: en-gb|en-us|de|fr|it|es|ru], [volume|v: 0 to 20]');
+            break;
+          case 'accent':
+          case 'a':
+            accent = value;
+            if (accentMap[accent]) {
+              accent = accentMap[accent];
+            }
+            break;
+          case 'volume':
+          case 'v':
+            volume = parseInt(value);
+            if (volume >= 20) {
+              volume = 10;
+            }
+            break;
+          default:
+            res.end('Invalid option, try [help] for a list of valid ones');
+            break;
+        }
+      }
 
       try {
         obj = querystring.parse(data.toString())
@@ -67,15 +99,11 @@ var httpServer = http.createServer(function (req, res) {
 
       text = obj.text;
 
-      var matched = text.match(/\[accent: (.*)\]/i);
-      if (matched) {
-        text = text.replace(/\[accent: (.*)\]/i, '');
-        if (accentMap[matched[1]]) {
-          accent = accentMap[matched[1].toLowerCase()];
-        } else {
-          return hasError('Invalid accent option')
-        }
-      }
+      var regex = /\[(accent|a|v|volume|help|h)(?:\: ([a-z0-9A-Z-]*))?\]/gi;
+      text = text.replace(regex, function (match, g1, g2) {
+        command(g1, g2);
+        return '';
+      }).trim();
 
       var request = {
         ie: 'UTF-8',
@@ -83,7 +111,7 @@ var httpServer = http.createServer(function (req, res) {
         q: text,
         tl: accent
       };
-      player.play('http://translate.google.com/translate_tts?' + querystring.stringify(request), {player: 'mplayer', mplayer: ['-af', 'volume=' + config.get('volume')]});
+      player.play('http://translate.google.com/translate_tts?' + querystring.stringify(request), {player: 'mplayer', mplayer: ['-af', 'volume=' + volume]});
 
       res.statusCode = 200;
       res.end('Your words will be spoken.');
