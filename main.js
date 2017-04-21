@@ -126,33 +126,32 @@ var httpServer = http.createServer(function (req, res) {
   });
 });
 
+var playSoundHandler = function (type, reference) {
+  var fileName = slug(reference, {lower: true});
+  playRandomSound(type + '/' + fileName);
+}
+
 ghHandler.on('issues', function (event) {
   var data = event.payload;
 
-  if (!data.action || data.action !== 'labeled') {
+  if (data.action && data.action === 'labeled') {
+    playSoundHandler('label', data.label.name);
     return;
   }
-
-  var label = data.label.name;
-  var fileName = slug(label, {lower: true});
-  playRandomSound('label/' + fileName);
 });
 
 ghHandler.on('pull_request', function (event) {
   var data = event.payload;
 
-  if (!data.action || data.action !== 'closed') {
+  if (data.action && data.action === 'closed' && data.pull_request && data.pull_request.merged === true) {
+    playSoundHandler('merged', data.pull_request.base.ref);
     return;
   }
 
-  if (!data.pull_request || data.pull_request.merged !== true) {
+  if (data.action && data.action === 'labeled') {
+    playSoundHandler('label', data.label.name);
     return;
   }
-
-  var baseBranch = data.pull_request.base.ref;
-  var fileName = slug(baseBranch, {lower: true});
-
-  playRandomSound('merged/' + baseBranch);
 });
 
 initialise();
