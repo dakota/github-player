@@ -32,7 +32,11 @@ function playRandomSound(sourceFile)
     var soundFile = lines[Math.floor(Math.random()*(lines.length - 1))];
 
     console.log(Util.format('Playing %s from the %s list', soundFile, sourceFile));
-    player.play('sounds/' + soundFile);
+    player.play('sounds/' + soundFile, , function(err){
+        if (err) {
+            console.log(err);
+        }
+    });
   });
 }
 
