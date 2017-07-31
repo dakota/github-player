@@ -111,6 +111,7 @@ var httpServer = http.createServer(function (req, res) {
         q: text,
         tl: accent
       };
+      console.log('Speak received');
       player.play('http://translate.google.com/translate_tts?' + querystring.stringify(request), {player: 'mplayer', mplayer: ['-af', 'volume=' + volume]});
 
       res.statusCode = 200;
@@ -128,6 +129,7 @@ var httpServer = http.createServer(function (req, res) {
 
 var playSoundHandler = function (type, reference) {
   var fileName = slug(reference, {lower: true});
+  console.log('Will be playing sounds for ' + type + ' with reference ' + reference);
   playRandomSound(type + '/' + fileName);
 }
 
